@@ -1,0 +1,12 @@
+{
+    "text.autoconfig.simple-resourcify-datapacks.title": "Simple Resourcify Datapacks",
+    
+    "text.autoconfig.simple-resourcify-datapacks.option.registerDatapackSource": "Register Folder as Source",
+    "text.autoconfig.simple-resourcify-datapacks.option.registerDatapackSource.@Tooltip": "If enabled, the game will scan the configured folder for datapacks.",
+    
+    "text.autoconfig.simple-resourcify-datapacks.option.datapackPath": "Datapack Folder Path",
+    "text.autoconfig.simple-resourcify-datapacks.option.datapackPath.@Tooltip": "The folder where Resourcify will save datapacks.\nDefault: datapacks",
+
+    "simple-resourcify-datapacks.toast.title": "Simple Resourcify Datapacks Error",
+    "simple-resourcify-datapacks.toast.description": "The configured datapack path was invalid and has been reset to default."
+}
