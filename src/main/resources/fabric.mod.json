@@ -3,7 +3,7 @@
 	"id": "simple-resourcify-datapacks",
 	"version": "${version}",
 	"name": "Simple Resourcify Datapacks",
-	"description": "Adjusts Resourcify to download datapacks the directory used by Simple Datapacks.",
+	"description": "Configurable download location for Resourcify datapacks",
 	"authors": [
 		"AshlynnMods"
 	],
@@ -20,18 +20,24 @@
 				"value": "com.ashlynnmods.simpleresourcifydatapacks.SimpleResourcifyDatapacks",
 				"adapter": "kotlin"
 			}
+		],
+		"modmenu": [
+			{
+				"adapter": "kotlin",
+				"value": "com.ashlynnmods.simpleresourcifydatapacks.integration.ModMenuIntegration"
+			}
 		]
 	},
 	"mixins": [
 		"simple-resourcify-datapacks.mixins.json"
 	],
 	"depends": {
-		"fabricloader": ">=0.18.4",
-		"minecraft": "~1.21.11",
+		"fabricloader": ">=0.18.1",
+		"minecraft": ">=1.21.11",
 		"java": ">=21",
 		"fabric-api": "*",
 		"fabric-language-kotlin": "*",
-        "resourcify": "*",
-        "simple_datapacks": "*"
+		"cloth-config": "*",
+        "resourcify": "*"
 	}
 }
