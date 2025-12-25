@@ -1,6 +1,7 @@
 package com.ashlynnmods.simpleresourcifydatapacks.mixin;
 
 import com.ashlynnmods.simpleresourcifydatapacks.config.ModConfig;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.server.packs.repository.FolderRepositorySource;
 import net.minecraft.server.packs.repository.PackRepository;
@@ -118,11 +119,16 @@ public class PackRepositoryMixin {
             Constructor<?> validatorCtor = validatorClass.getDeclaredConstructor(PathMatcher.class);
             validatorCtor.setAccessible(true);
 
+            PackSource customSource = PackSource.create(
+                (name) -> Component.translatable("pack.nameAndSource", name, Component.literal("external")), 
+                false
+            );
+
             PathMatcher allowAll = FileSystems.getDefault().getPathMatcher("regex:.*");
             Object validatorInstance = validatorCtor.newInstance(allowAll);
 
             sourceCtor.setAccessible(true);
-            return (RepositorySource) sourceCtor.newInstance(path, PackType.SERVER_DATA, PackSource.WORLD, validatorInstance);
+            return (RepositorySource) sourceCtor.newInstance(path, PackType.SERVER_DATA, customSource, validatorInstance);
 
         } catch (Exception e) {
             e.printStackTrace();
