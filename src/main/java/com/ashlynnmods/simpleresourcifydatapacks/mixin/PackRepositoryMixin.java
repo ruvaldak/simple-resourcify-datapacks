@@ -6,11 +6,11 @@ import net.minecraft.server.packs.repository.FolderRepositorySource;
 import net.minecraft.server.packs.repository.PackRepository;
 import net.minecraft.server.packs.repository.PackSource;
 import net.minecraft.server.packs.repository.RepositorySource;
+import net.minecraft.server.packs.repository.ServerPacksSource;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
-//import java.io.File;
 import java.lang.reflect.Constructor;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -26,12 +26,25 @@ public class PackRepositoryMixin {
 
     @ModifyVariable(method = "<init>", at = @At("HEAD"), argsOnly = true)
     private static RepositorySource[] addExternalSource(RepositorySource[] sources) {
+        boolean isDatapackRepo = false;
+        for (RepositorySource source : sources) {
+            if (source instanceof ServerPacksSource) {
+                isDatapackRepo = true;
+                break;
+            }
+        }
+
+        if (!isDatapackRepo) {
+            return sources;
+        }
+
         ModConfig config = ModConfig.get();
 
         if (!config.registerDatapackSource) {
             return sources;
         }
 
+        Path expandedPath;
         Path targetPath;
 
         try {
@@ -40,12 +53,12 @@ public class PackRepositoryMixin {
                 throw new IllegalArgumentException("Path is empty");
             }
 
-            targetPath = Paths.get(expandPath(rawPath)).toAbsolutePath();
-
+            expandedPath = Paths.get(expandPath(rawPath));
+            targetPath = expandedPath.toAbsolutePath().normalize();
+            
+            // Check existence
             if (!Files.exists(targetPath)) {
-				Path p = Paths.get(rawPath).normalize();
-				boolean isDefault = p.equals(Paths.get("datapacks"));
-                //boolean isDefault = rawPath.equals("datapacks") || rawPath.equals("./datapacks") || rawPath.equals(".\\datapacks");
+                boolean isDefault = expandedPath.normalize().equals("datapacks") || expandedPath.normalize().equals("./datapacks") || expandedPath.normalize().equals(".\\datapacks");
 
                 if (isDefault) {
                     // Creating Default folder is expected and not an error.
@@ -117,7 +130,7 @@ public class PackRepositoryMixin {
         return null;
     }
 
-	// Potentially ensures Linux compatibility? Idk, just a shot in the dark here.
+    // Potentially ensures Linux compatibility? Idk, just a shot in the dark here.
 	// Might need to come back to this later. 
 	private static String expandPath(String pathStr) {
 		if (pathStr != null && pathStr.startsWith("~")) {
